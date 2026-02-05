@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -23,4 +27,46 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Custom utility classes*/
+/*
+@utility btn-primary {
+  @apply bg-primary-500 hover:bg-primary-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+}
+
+@utility card {
+  @apply bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 border border-gray-200;
+}
+
+@utility input-field {
+  @apply w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder:text-gray-500 bg-white;
+} */
+
+/* Custom utility classes */
+@utility btn-primary {
+  @apply text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+}
+
+@utility card {
+  @apply bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 border border-gray-200;
+}
+
+@utility input-field {
+  @apply w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent outline-none transition-all text-gray-900 placeholder:text-gray-400 bg-white;
+}
+
+/* Fix light text issue */
+@layer base {
+  * {
+    color: oklch(0.145 0 0); /* Force dark text */
+  }
+  
+  input, textarea, select {
+    color: oklch(0.145 0 0) !important; /* Dark text for inputs */
+  }
+  
+  ::placeholder {
+    color: oklch(0.5 0 0) !important; /* Medium gray for placeholders */
+  }
 }
