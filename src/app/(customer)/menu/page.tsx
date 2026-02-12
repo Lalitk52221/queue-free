@@ -1,6 +1,10 @@
 "use client";
-import { motion } from "framer-motion";
-import React from "react";
+import MenuCard from "@/app/UI/MenuCard";
+import { keyframes, motion } from "framer-motion";
+// import { filter } from "framer-motion/client";
+
+import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import {
   FaFilter,
   FaFire,
@@ -11,45 +15,78 @@ import {
 } from "react-icons/fa";
 import { GiChickenOven, GiFruitBowl, GiNoodles } from "react-icons/gi";
 
+const categories = [
+  {
+    id: "all",
+    name: "All Items",
+    icon: <FaUtensils />,
+    color: "text-gray-600",
+  },
+  {
+    id: "special",
+    name: "Today's Special",
+    icon: <FaFire />,
+    color: "text-red-500",
+  },
+  {
+    id: "appetizer",
+    name: "Appetizers",
+    icon: <GiFruitBowl />,
+    color: "text-green-500",
+  },
+  {
+    id: "main",
+    name: "Main Course",
+    icon: <GiChickenOven />,
+    color: "text-orange-500",
+  },
+  {
+    id: "dessert",
+    name: "Desserts",
+    icon: <FaIceCream />,
+    color: "text-pink-500",
+  },
+  {
+    id: "beverage",
+    name: "Beverages",
+    icon: <FaGlassCheers />,
+    color: "text-blue-500",
+  },
+];
+
 export default function MenuPage() {
-  const categories = [
-    {
-      id: "all",
-      name: "All Items",
-      icon: <FaUtensils />,
-      color: "text-gray-600",
-    },
-    {
-      id: "special",
-      name: "Today's Special",
-      icon: <FaFire />,
-      color: "text-red-500",
-    },
-    {
-      id: "appetizer",
-      name: "Appetizers",
-      icon: <GiFruitBowl />,
-      color: "text-green-500",
-    },
-    {
-      id: "main",
-      name: "Main Course",
-      icon: <GiChickenOven />,
-      color: "text-orange-500",
-    },
-    {
-      id: "dessert",
-      name: "Desserts",
-      icon: <FaIceCream />,
-      color: "text-pink-500",
-    },
-    {
-      id: "beverage",
-      name: "Beverages",
-      icon: <FaGlassCheers />,
-      color: "text-blue-500",
-    },
-  ];
+  const [dishes, setDishes] = useState<any[]>([]);
+  const [filteredDishes, setFilteredDishes] = useState<any[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let filtered = dishes;
+    if (selectedCategory !== "all") {
+      if (selectedCategory === "special") {
+        filtered = filtered.filter((dish) => dish.isTodaySpecial);
+      } else {
+        filtered = filtered.filter(
+          (dish) => dish.category === setSelectedCategory,
+        );
+      }
+    }
+  }, [dishes, selectedCategory]);
+
+  const fetchDishes = async ()=>{
+    try{
+      setIsLoading(true);
+      const response = await fetch("/api/dishes");
+      const data = await response.json();
+      setDishes(data);
+      setIsLoading(false);
+      
+    } catch(error){
+      toast.error("Failed to load menu");
+    }finally{
+      setIsLoading(false);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-linear-to-b from-amber-50 to-orange-50">
@@ -108,23 +145,19 @@ export default function MenuPage() {
         <div className="flex flex-wrap gap-3">
           {categories.map((category) => (
             <motion.button
-            key={category.id}
-            whileHover={{scale:1.05}}
-            whileTap={{scale:0.95}}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200
-            }`}
+              key={category.id}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setSelectedCategory(category.id)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200
+             ${selectedCategory === category.id ? "bg-orange-500 text-white shadow-lg" : "bg-white text-gray-700 shadow hover:shadow-md"}`}
             >
-
-            <span
-              
-              className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm"
-              >
-              {category.icon}
-              <span className={category.color}>{category.name}</span>
-            </span>
-              </motion.button>
+              <span className={category.color}>{category.icon}</span>
+              <span>{category.name}</span>
+            </motion.button>
           ))}
         </div>
+                 
       </main>
     </div>
   );
