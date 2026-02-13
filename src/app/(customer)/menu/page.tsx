@@ -1,6 +1,6 @@
 "use client";
 import MenuCard from "@/app/UI/MenuCard";
-import { keyframes, motion } from "framer-motion";
+import { motion } from "framer-motion";
 // import { filter } from "framer-motion/client";
 
 import React, { useEffect, useState } from "react";
@@ -14,6 +14,20 @@ import {
   FaUtensils,
 } from "react-icons/fa";
 import { GiChickenOven, GiFruitBowl, GiNoodles } from "react-icons/gi";
+
+type Dish = {
+  _id: string;
+  name: string;
+  description?: string;
+  price: number;
+  category: "appetizer" | "main" | "dessert" | "beverage" | "special";
+  image: string;
+  isAvailable: boolean;
+  preparationTime: number;
+  isTodaysSpecial: boolean;
+  ingredients: string[];
+  spicyLevel: number;
+};
 
 const categories = [
   {
@@ -55,23 +69,35 @@ const categories = [
 ];
 
 export default function MenuPage() {
-  const [dishes, setDishes] = useState<any[]>([]);
-  const [filteredDishes, setFilteredDishes] = useState<any[]>([]);
+  const [dishes, setDishes] = useState<Dish[]>([]);
+  const [filteredDishes, setFilteredDishes] = useState<Dish[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+
+useEffect(() => {
+    fetchDishes();  
+},[])
 
   useEffect(() => {
     let filtered = dishes;
     if (selectedCategory !== "all") {
       if (selectedCategory === "special") {
-        filtered = filtered.filter((dish) => dish.isTodaySpecial);
+        filtered = filtered.filter((dish) => dish.isTodaysSpecial);
       } else {
         filtered = filtered.filter(
-          (dish) => dish.category === setSelectedCategory,
+          (dish) => dish.category === selectedCategory,
         );
       }
     }
-  }, [dishes, selectedCategory]);
+    if(searchQuery){
+      filtered = filtered.filter((dish)=> 
+      dish.name.toLowerCase().includes(searchQuery.toLowerCase())  || 
+    dish.description?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+    }
+    setFilteredDishes(filtered);
+  }, [dishes, selectedCategory, searchQuery]);
 
   const fetchDishes = async ()=>{
     try{
@@ -83,10 +109,29 @@ export default function MenuPage() {
       
     } catch(error){
       toast.error("Failed to load menu");
+      console.log(error)
     }finally{
       setIsLoading(false);
     }
   }
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  // const itemVariants = {
+  //   hidden: { y: 20, opacity: 0 },
+  //   visible: {
+  //     y: 0,
+  //     opacity: 1
+  //   }
+  // };
 
   return (
     <div className="min-h-screen bg-linear-to-b from-amber-50 to-orange-50">
@@ -119,6 +164,8 @@ export default function MenuPage() {
                 <input
                   type="text"
                   placeholder="Search dishes"
+                  value={searchQuery}
+                  onChange = {(e)=>setSearchQuery(e.target.value)}
                   className="w-full pl-10 border border-gray-300 pr-4 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
               </div>
@@ -157,7 +204,38 @@ export default function MenuPage() {
             </motion.button>
           ))}
         </div>
-                 
+
+       {/* menu grid  */}
+
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-6">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="bg-white rounded-xl shadow-md p-4 animate-pulse">
+                <div className="h-48 bg-gray-300 rounded-lg mb-4"></div>
+                <div className="h-4 bg-gray-300 rounded mb-2"></div>
+                <div className="h-3 bg-gray-300 rounded w-3/4"></div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-6"
+          >
+            {filteredDishes.map((dish, index) => (
+              // <motion.div
+              //   key={dish._id}
+              //   variants={itemVariants}
+              //   custom={index}
+              //   layout
+              // >
+                <MenuCard key={index} dish={dish} />
+              // </motion.div>
+            ))}
+          </motion.div>
+        )}
       </main>
     </div>
   );
