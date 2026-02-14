@@ -1,9 +1,10 @@
 "use client";
 import MenuCard from "@/app/UI/MenuCard";
 import { motion } from "framer-motion";
+// import { div } from "framer-motion/client";
 // import { filter } from "framer-motion/client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import {
   FaFilter,
@@ -74,6 +75,23 @@ export default function MenuPage() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const[showCategory,setShowCategory] = useState(true);
+  const searchRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      searchRef.current &&
+      !searchRef.current.contains(event.target as Node)
+    ) {
+      setShowCategory(true); // show again when clicking outside
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => document.removeEventListener("mousedown", handleClickOutside);
+}, []);
+
 
 useEffect(() => {
     fetchDishes(); 
@@ -122,6 +140,11 @@ useEffect(() => {
     }
   }
 
+//   const searchbtn = (e)=>{
+// setSearchQuery(e.target.value)
+// setsShowCategory(false);
+//   }
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -166,13 +189,14 @@ useEffect(() => {
               animate={{ y: 0, opacity: 1 }}
               className="relative w-full md:w-96"
             >
-              <div className="relative">
+              <div className="relative" ref={searchRef}>
                 <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
                   placeholder="Search dishes"
                   value={searchQuery}
                   onChange = {(e)=>setSearchQuery(e.target.value)}
+                  onClick={()=>setShowCategory(false)}
                   className="w-full pl-10 border border-gray-300 pr-4 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
               </div>
@@ -192,12 +216,16 @@ useEffect(() => {
         </div>
       </header>
       <main className="container mx-auto py-8 px-8">
+        {
+          showCategory && (
+<div>
+          
         <div className="flex items-center gap-2 mb-4">
           <FaFilter className="text-gray-600" />
           <h2 className="text-lg font-semibold text-gray-700">Categories</h2>
         </div>
         <div className="flex flex-wrap gap-3">
-          {categories.map((category) => (
+          { categories.map((category) => (
             <motion.button
               key={category.id}
               whileHover={{ scale: 1.05 }}
@@ -211,6 +239,8 @@ useEffect(() => {
             </motion.button>
           ))}
         </div>
+        </div>)
+        }
 
        {/* menu grid  */}
 
