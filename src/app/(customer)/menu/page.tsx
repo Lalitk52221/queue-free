@@ -76,7 +76,7 @@ export default function MenuPage() {
   const [isLoading, setIsLoading] = useState(true);
 
 useEffect(() => {
-    fetchDishes();  
+    fetchDishes(); 
 },[])
 
   useEffect(() => {
@@ -104,12 +104,19 @@ useEffect(() => {
       setIsLoading(true);
       const response = await fetch("/api/dishes");
       const data = await response.json();
+      console.log("API Data: ", data)
+
+      if (!response.ok || !Array.isArray(data)) {
+      throw new Error("Invalid API response");
+    }
+
       setDishes(data);
       setIsLoading(false);
       
     } catch(error){
       toast.error("Failed to load menu");
       console.log(error)
+      setDishes([]);
     }finally{
       setIsLoading(false);
     }
