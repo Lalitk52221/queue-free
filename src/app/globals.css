@@ -58,9 +58,7 @@ body {
 
 /* Fix light text issue */
 @layer base {
-  * {
-    color: oklch(0.145 0 0); /* Force dark text */
-  }
+  
   
   input, textarea, select {
     color: oklch(0.145 0 0) !important; /* Dark text for inputs */
