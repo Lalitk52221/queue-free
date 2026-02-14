@@ -9,12 +9,12 @@
   --foreground: #171717;
 }
 
-@theme inline {
+/* @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
+} */
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -43,18 +43,20 @@ body {
   @apply w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder:text-gray-500 bg-white;
 } */
 
+
+
 /* Custom utility classes */
-@utility btn-primary {
+/* @utility btn-primary {
   @apply text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
-}
+} */
 
-@utility card {
+/* @utility card {
   @apply bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 border border-gray-200;
-}
+} */
 
-@utility input-field {
+/* @utility input-field {
   @apply w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent outline-none transition-all text-gray-900 placeholder:text-gray-400 bg-white;
-}
+} */
 
 /* Fix light text issue */
 @layer base {
