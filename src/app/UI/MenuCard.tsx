@@ -11,7 +11,7 @@ interface MenuCardProps {
   dish: {
     _id: string;
     name: string;
-    description: string;
+    description?: string;
     price: number;
     image: string;
     category: string;
