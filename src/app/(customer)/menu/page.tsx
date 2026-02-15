@@ -1,4 +1,6 @@
 "use client";
+import { useCart } from "@/app/components/providers/CartProvider";
+import CartSidebar from "@/app/UI/CartSidebar";
 import MenuCard from "@/app/UI/MenuCard";
 import { motion } from "framer-motion";
 // import { div } from "framer-motion/client";
@@ -74,10 +76,11 @@ export default function MenuPage() {
   const [filteredDishes, setFilteredDishes] = useState<Dish[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [showCart, setShowCart] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const[showCategory,setShowCategory] = useState(true);
   const searchRef = useRef<HTMLDivElement>(null);
-
+  const {getItemCount} = useCart();
   useEffect(() => {
   const handleClickOutside = (event: MouseEvent) => {
     if (
@@ -205,11 +208,21 @@ useEffect(() => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={()=>setShowCart(true)}
               className="relative bg-linear-to-r from-orange-500 to-red-500 text-white px-6 py-2 rounded-full font-medium hover:shadow-lg transition-shadow"
             >
               <div className="flex items-center gap-2">
                 <FaUtensils />
                 <span>View Cart</span>
+                {getItemCount()>0 &&(
+                  <motion.span 
+                  initial={{scale:0}}
+                  animate={{scale:1}}
+                  className="absolute -top-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
+                    
+                  {getItemCount()}
+                  </motion.span>
+                )}
               </div>
             </motion.button>
           </div>
@@ -274,6 +287,9 @@ useEffect(() => {
           </motion.div>
         )}
       </main>
+
+      {/* cardslider  */}
+        <CartSidebar isOpen={showCart} onClose={()=>setShowCart(false)}/>
     </div>
   );
 }
