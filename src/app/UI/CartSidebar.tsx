@@ -170,7 +170,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm text-gray-600">
                     <span className="text-gray-600">Subtotal</span>
-                    <span>${calculateSubtotal().toFixed(2)}</span>
+                    <span>₹{calculateSubtotal().toFixed(2)}</span>
                   </div>
                   {/* <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Tax (10%)</span>

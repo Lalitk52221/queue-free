@@ -54,13 +54,15 @@ body {
   @apply bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 border border-gray-200;
 } */
 
-/* @utility input-field {
+@utility input-field {
   @apply w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent outline-none transition-all text-gray-900 placeholder:text-gray-400 bg-white;
-} */
+}
 
 /* Fix light text issue */
 @layer base {
-  
+  * {
+    color: oklch(0.145 0 0); /* Force dark text */
+  }
   
   input, textarea, select {
     color: oklch(0.145 0 0) !important; /* Dark text for inputs */

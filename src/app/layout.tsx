@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "./components/providers/CartProvider";
+import { Toaster } from "react-hot-toast";
+import { SocketProvider } from "./components/providers/SocketProvider";
 
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
@@ -36,9 +38,33 @@ export default function RootLayout({
         // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         className={`${poppins.className} antialiased`}
       >
+        <SocketProvider>
         <CartProvider>
             {children}
           </CartProvider>
+          </SocketProvider>
+          <Toaster 
+          position="top-right"
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: '#363636',
+              color: '#fff',
+            },
+            success: {
+              duration: 2000,
+              style: {
+                background: '#10b981',
+              },
+            },
+            error: {
+              duration: 3000,
+              style: {
+                background: '#ef4444',
+              },
+            },
+          }}
+        />
       </body>
     </html>
   );

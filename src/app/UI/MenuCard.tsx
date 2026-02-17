@@ -4,7 +4,7 @@
 import { motion } from 'framer-motion';
 import { FaStar, FaClock, FaFire, FaLeaf } from 'react-icons/fa';
 // import { useCart } from '@/components/providers/CartProvider';
-// import toast from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import Image from 'next/image';
 import { useCart } from '../components/providers/CartProvider';
 
