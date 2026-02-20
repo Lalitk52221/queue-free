@@ -4,8 +4,9 @@
 import { motion } from 'framer-motion';
 import { FaStar, FaClock, FaFire, FaLeaf } from 'react-icons/fa';
 // import { useCart } from '@/components/providers/CartProvider';
-// import toast from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import Image from 'next/image';
+import { useCart } from '../components/providers/CartProvider';
 
 interface MenuCardProps {
   dish: {
@@ -23,17 +24,18 @@ interface MenuCardProps {
 }
 
 export default function MenuCard({ dish }: MenuCardProps) {
-  // const { addItem } = useCart();
+  // const { items, removeItem, updateQuantity } = useCart();
+  const { addItem } = useCart();
 
-  // const handleAddToCart = () => {
-  //   addItem({
-  //     _id: dish._id,
-  //     name: dish.name,
-  //     price: dish.price,
-  //     quantity: 1,
-  //     image: dish.image,
-  //   });
-  // };
+  const handleAddToCart = () => {
+    addItem({
+      _id: dish._id,
+      name: dish.name,
+      price: dish.price,
+      quantity: 1,
+      image: dish.image,
+    });
+  };
 
   return (
     <motion.div
@@ -64,6 +66,7 @@ export default function MenuCard({ dish }: MenuCardProps) {
           {dish.spicyLevel > 0 && (
             <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-medium">
               {/* {Array.from({ length: dish.spicyLevel }).map((_, i) => '🌶️')} */}
+              {'🌶️'.repeat(dish.spicyLevel)}
             </span>
           )}
         </div>
@@ -122,15 +125,15 @@ export default function MenuCard({ dish }: MenuCardProps) {
         </div>
 
         {/* Add to Cart Button */}
-        {/* <motion.button
+        <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={handleAddToCart}
           className="w-full bg-linear-to-r from-orange-500 to-red-500 text-white py-2 rounded-lg font-medium hover:shadow-lg transition-shadow flex items-center justify-center gap-2"
         >
-          <span>Add to Cart</span>
+          <span>Add to Cart </span>
           <span className="text-lg">+</span>
-        </motion.button> */}
+        </motion.button>
       </div>
     </motion.div>
   );
