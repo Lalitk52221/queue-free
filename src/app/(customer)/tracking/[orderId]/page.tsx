@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { 
-  FaClock, FaUtensils, FaCheckCircle, FaMotorcycle,
+  FaClock, FaUtensils, FaCheckCircle,
   FaPrint, FaHome, FaExclamationTriangle, FaSpinner
 } from 'react-icons/fa';
 import { useSocket } from '@/app/components/providers/SocketProvider';

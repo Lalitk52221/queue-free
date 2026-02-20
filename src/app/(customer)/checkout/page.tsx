@@ -77,6 +77,11 @@ export default function CheckoutPage() {
       
       if (data.success) {
         setOrderDetails(data.order);
+        try {
+          localStorage.setItem('orderDetails', JSON.stringify(data.order));
+        } catch (e) {
+          console.error('Failed to save order to localStorage', e);
+        }
         
         // if (paymentMethod === 'qr') {
         //   const qr = await QRCode.toDataURL(
@@ -248,7 +253,7 @@ export default function CheckoutPage() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handlePlaceOrder}
-                className=" btn-primary py-3 text-lg "
+                className="px-3 rounded-md  btn-primary bg-amber-500 py-3 text-lg "
               >
                 Place Order
               </motion.button>
