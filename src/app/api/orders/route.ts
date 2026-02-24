@@ -111,7 +111,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const restaurantId = searchParams.get("restaurantId");
     const status = searchParams.get("status");
-    const customerName = searchParams.get("customerName");
+    // const customerName = searchParams.get("customerName");
 
     const query: OrderQuery = {};
 
@@ -123,9 +123,9 @@ export async function GET(request: NextRequest) {
       query.status = status;
     }
 
-    if (customerName) {
-      query.customerName = customerName;
-    }
+    // if (customerName) {
+    //   query.customerName = customerName;
+    // }
 
     const orders = await Order.find(query)
       .populate("items.dish")
