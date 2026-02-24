@@ -24,6 +24,7 @@ interface OrderDetails {
   estimatedWaitTime: number;
   invoiceNumber: string;
   status: string;
+  // clientId: string;
 }
 
 export default function CheckoutPage() {
@@ -78,7 +79,40 @@ export default function CheckoutPage() {
       if (data.success) {
         setOrderDetails(data.order);
         try {
-          localStorage.setItem('orderDetails', JSON.stringify(data.order));
+          // Ensure a per-device client id so the device only sees its own orders
+          let clientId = localStorage.getItem('clientId');
+          if (!clientId) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            if (typeof crypto !== 'undefined' && (crypto as any).randomUUID) {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              clientId = (crypto as any).randomUUID();
+            } else {
+              clientId = 'cid-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+            }
+            localStorage.setItem('clientId', clientId as string);
+          }
+
+          // Build a local copy of the order with clientId for local tracking only
+          const localOrder = { ...(data.order || {}), clientId, createdAt: (data.order && data.order.createdAt) || new Date().toISOString() };
+
+          // Save latest single-order pointer for quick access (device-scoped)
+          localStorage.setItem('orderDetails', JSON.stringify(localOrder));
+
+          // Also maintain an array of recent orders for this device
+          try {
+            const raw = localStorage.getItem('orders');
+            const arr = raw ? JSON.parse(raw) : [];
+            // avoid duplicates based on orderId
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const exists = arr.find((o: any) => o.orderId === localOrder.orderId);
+            if (!exists) arr.unshift(localOrder);
+            // keep recent 20
+            localStorage.setItem('orders', JSON.stringify(arr.slice(0, 20)));
+          } catch (e2) {
+            console.error('Failed to append order to orders array', e2);
+            // fallback: store single under orders
+            localStorage.setItem('orders', JSON.stringify([localOrder]));
+          }
         } catch (e) {
           console.error('Failed to save order to localStorage', e);
         }

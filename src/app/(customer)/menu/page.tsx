@@ -265,7 +265,8 @@ export default function MenuPage() {
                 // onClick={()=>setShowCart(true)}
                 onClick={() => {
                   if (hasOrder) {
-                    router.push(`/tracking/${orderDetails!.orderId}`);
+                    // router.push(`/tracking/${orderDetails!.orderId}`);
+                    router.push('/tracking')
                   } else {
                     toast.error("No active order to track");
                   }
@@ -280,16 +281,16 @@ export default function MenuPage() {
                 <div className="flex items-center justify-between gap-2">
                   {hasOrder ? (
                     <div className="flex items-center gap-3">
-                      <span className="w-2 h-2 bg-white rounded-full animate-ping"></span>
+                      {/* <span className="w-2 h-2 bg-white rounded-full animate-ping"></span> */}
                       <div className="flex items-start flex-col leading-4">
-                        <span>Track order</span>
+                        <span>Your Order</span>
                         <span className="text-[10px] text-gray-200">
-                          {orderDetails!.orderId}
+                          {/* {orderDetails!.orderId} */}
                         </span>
                       </div>
                     </div>
                   ) : (
-                    <span>Track order</span>
+                    <span>Your Order</span>
                   )}
                 </div>
               </motion.button>

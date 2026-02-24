@@ -11,6 +11,13 @@ interface CartItem {
   image?: string;
   specialInstructions?: string;
 }
+// interface activeOrders{
+//   orderId: string;
+//   status?: string;
+//   createdAt?: string;
+//   finalAmount?: number;
+//   clientId: string;
+// }
 
 interface CartContextType {
   items: CartItem[];
@@ -20,6 +27,7 @@ interface CartContextType {
   clearCart: () => void;
   getTotal: () => number;
   getItemCount: () => number;
+  // activeOrders: activeOrders[];
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -103,7 +111,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         clearCart,
         getTotal,
         getItemCount,
+        // activeOrders: [],
       }}
+  
     >
       {children}
     </CartContext.Provider>

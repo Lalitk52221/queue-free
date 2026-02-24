@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+export const runtime = 'nodejs';
 import { connectToDatabase } from "@/app/lib/mongodb";
 import Dish from "@/models/Dish";
 // import QRCode from 'qrcode';
 import Order from "@/models/Order";
+import Counter from '@/models/Counter';
 
 interface OrderItem {
   dishId: string;
@@ -43,16 +45,16 @@ export async function POST(request: NextRequest) {
       }),
     );
 
-    // Generate order ID
-    // const timestamp = Date.now();
-    // const random = Math.floor(Math.random() * 1000);
-    const orderCounter = 1;
-    const invoiceCounter = 1;
+    // Generate sequential order ID (atomic) using Counter collection
+    const counter = await Counter.findOneAndUpdate(
+      { _id: 'orderId' },
+      { $inc: { seq: 1 } },
+      { upsert: true, new: true }
+    );
 
-    const orderId = `ORD-${String(orderCounter).padStart(3, "0")}`;
-    const invoiceNumber = `INV-${String(invoiceCounter).padStart(3, "0")}`;
-    // const orderId = `ORD-${timestamp}-${random}`;
-    // const invoiceNumber = `INV-${timestamp}`;
+    const seq = (counter && counter.seq) || 1;
+    const orderId = `ORD-${String(seq).padStart(3, '0')}`;
+    const invoiceNumber = `INV-${String(seq).padStart(3, '0')}`;
 
     // Generate QR code for payment
     // const paymentUrl = `${process.env.NEXT_PUBLIC_APP_URL}/payment/${orderId}`;
@@ -93,8 +95,10 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error creating order:", error);
+    const message = error instanceof Error ? error.message : String(error);
+    const stack = error instanceof Error && error.stack ? error.stack : undefined;
     return NextResponse.json(
-      { error: "Failed to create order" },
+      { error: "Failed to create order", message, stack },
       { status: 500 },
     );
   }
@@ -107,6 +111,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const restaurantId = searchParams.get("restaurantId");
     const status = searchParams.get("status");
+    const customerName = searchParams.get("customerName");
 
     const query: OrderQuery = {};
 
@@ -116,6 +121,10 @@ export async function GET(request: NextRequest) {
 
     if (status) {
       query.status = status;
+    }
+
+    if (customerName) {
+      query.customerName = customerName;
     }
 
     const orders = await Order.find(query)

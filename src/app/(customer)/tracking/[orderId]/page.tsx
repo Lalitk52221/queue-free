@@ -69,10 +69,31 @@ export default function OrderTrackingPage() {
       });
     }
 
+    // Listen for localStorage changes from other tabs (chef updates sync to localStorage)
+    const onStorage = (ev: StorageEvent) => {
+      if (ev.key === 'orders' && ev.newValue) {
+        try {
+          const arr = JSON.parse(ev.newValue);
+          const found = arr.find((o: any) => o.orderId === params.orderId);
+          if (found) setOrder(found as OrderData);
+        } catch (e) {
+          // ignore
+        }
+      }
+      if (ev.key === 'orderDetails' && ev.newValue) {
+        try {
+          const obj = JSON.parse(ev.newValue);
+          if (obj.orderId === params.orderId) setOrder(obj as OrderData);
+        } catch (e) {}
+      }
+    };
+    window.addEventListener('storage', onStorage);
+
     return () => {
       if (socket) {
         socket.off('order-updated');
       }
+      window.removeEventListener('storage', onStorage as any);
     };
   }, [params.orderId, socket, fetchOrder]);
 
